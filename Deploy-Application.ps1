@@ -92,13 +92,13 @@ Param (
     [Parameter(Mandatory = $false)]
     [switch]$TerminalServerMode = $false,
     [Parameter(Mandatory = $false)]
-    [switch]$DisableLogging = $false
+    [switch]$DisableLogging = $false,
 	[Parameter(Mandatory = $true)]
 	[String]$PythonPkg  = '',
 	[Parameter(Mandatory = $false)]
 	[String]$PkgVersion = '',
 	[Parameter(Mandatory = $false)]
-	[String]$PythonPath = 'C:\Program Files\Python39\Scripts\pip.exe',
+	[String]$PythonPath = 'C:\Program Files\Python39\Scripts\pip.exe'
 	
 )
 
@@ -109,23 +109,13 @@ Try {
     }
     Catch {
     }
-	
-	##*===============================================
-    ##* Custom
-    ##*===============================================
-	
-	If($PkgVersion -ne ""){
-		If($DeploymentType -eq "Install"){
-			$PkgVersion += "$($PythonPkg)=$($PkgVersion)"
-		}
-	}
 
     ##*===============================================
     ##* VARIABLE DECLARATION
     ##*===============================================
     ## Variables: Application
-    [String]$appVendor = 'Python'
-    [String]$appName = 'LibraryFW'
+    [String]$appVendor = "$PythonPkg"
+    [String]$appName = 'PythonLibraryFW'
     [String]$appVersion = ''
     [String]$appArch = ''
     [String]$appLang = 'EN'
@@ -137,6 +127,16 @@ Try {
     ## Variables: Install Titles (Only set here to override defaults set by the toolkit)
     [String]$installName = ''
     [String]$installTitle = ''
+	
+	##*===============================================
+    ##* Custom
+    ##*===============================================
+	
+	If($PkgVersion -ne ""){
+		If($DeploymentType -eq "Install"){
+			$PythonPkg = "$($PythonPkg)=$($PkgVersion)"
+		}
+	}
 
     ##* Do not modify section below
     #region DoNotModify
@@ -213,7 +213,7 @@ Try {
         [String]$installPhase = 'Installation'
 		
         ## <Perform Installation tasks here>
-		Execute-Process -Path "$PythonPath" -Parameters 'install $($PythonPkg)' -WindowStyle 'Hidden'
+		Execute-Process -Path "$PythonPath" -Parameters "install $($PythonPkg)" -WindowStyle 'Hidden'
 		
         ##*===============================================
         ##* POST-INSTALLATION
@@ -243,7 +243,7 @@ Try {
         #Show-InstallationProgress
 		
         ## <Perform Pre-Uninstallation tasks here>
-		Execute-Process -Path "$PythonPath" -Parameters 'uninstall $($PythonPkg)' -WindowStyle 'Hidden'
+		Execute-Process -Path "$PythonPath" -Parameters "uninstall $($PythonPkg)" -WindowStyle 'Hidden'
 		
         ##*===============================================
         ##* UNINSTALLATION
@@ -251,7 +251,7 @@ Try {
         [String]$installPhase = 'Uninstallation'
 		
         ## <Perform Uninstallation tasks here>
-		Remove-RegistryKey -Key "HKEY_LOCAL_MACHINE\SOFTWARE\PythonLibraryFW\$($PythonPkg"
+		Remove-RegistryKey -Key "HKEY_LOCAL_MACHINE\SOFTWARE\PythonLibraryFW\$($PythonPkg)"
 		
         ##*===============================================
         ##* POST-UNINSTALLATION
